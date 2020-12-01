@@ -5,6 +5,7 @@
 // let products = []
 const image = 'https://placehold.it/200x150'
 const cartImage = 'https://placehold.it/100x80'
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/'
 
 class List {
     constructor (url, container) {
@@ -36,16 +37,70 @@ class Item {
         this.product_name = obj.product_name
         this.price = obj.price
         this.id_product = obj.id_product
-
+        this.img = img
+    }
+    getTemplate () {
+        return `
+            <div class="product-item" data-id="${this.id_product}">
+            <img src="${this.img}" alt="${this.product_name}">
+            <div class="desc">
+                <h3>${this.product_name}</h3>
+                <p> ${this.price} </p>
+                <button class="buy-btn"
+                    name="buy-btn"
+                    data-id="${this.id_product}"
+                    data-name="${this.product_name}"
+                    data-image="${this.img}"
+                    data-price="${this.price}">
+                    Купить
+                </button>
+            </div>
+        </div>
+        ` 
     }
 }
 
 
-class Catalog extends List {}
-class Cart extends List {}
+class Catalog extends List {
+    constructor (url = '/catalogData.json', container = '.products') {
+    super (url, container)
+    }
+    _init () {
+
+    }
+}
+class Cart extends List {
+    constructor (url = '/getBasket.json', container = '.products') {
+        super (url, container)
+        }
+        _init () {
+    
+        }
+}
 
 class CatalogItem extends Item {}
-class CartItem extends Item {}
+class CartItem extends Item {
+    constructor (obj, img = cartImage) {
+        super(obj, img) 
+            this.quantity = 1    
+    }
+    getTemplate () {
+        return `<div class="cart-item" data-id_product="${this.id_product}">
+            <div class="product-bio">
+                <img src="${this.img}" alt="Some image">
+                <div class="product-desc">
+                    <p class="product-title">${this.product_name}</p>
+                    <p class="product-quantity">Quantity: ${this.quantity}</p>
+                    <p class="product-single-price">$${this.price} each</p>
+                </div>
+            </div>
+            <div class="right-block">
+                <p class="product-price">${this.quantity * this.price}</p>
+                <button class="del-btn" name="del-btn" data-id_product="${this.id_product}">&times;</button>
+            </div>
+        </div>`
+    }
+}
 
 let classesDependency = {
     Catalog: CatalogItem,
